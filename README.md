@@ -7,4 +7,4 @@ Libraries Used: Pandas, BeautifulSoup, Plotly
 
 ![alt text](https://github.com/Nabaneet247/MF_Returns_Analyser/blob/master/Sample%20Plots/1Y%20Return%20Plot.png?raw=true)
 
-A sample html file can be found [here](Sample%20Plots). It displays the analysis of 30 Day Simple Annualised Growth Rate(SAGR) of all MF schemes from the last 15 years.
+Sample html files can be found [here](Sample%20Plots). It displays the analysis of 30 Day Simple Annualised Growth Rate(SAGR) and 1 Year CAGR of all MF schemes from the last 15 years.
