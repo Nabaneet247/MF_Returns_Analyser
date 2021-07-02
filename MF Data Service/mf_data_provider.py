@@ -44,10 +44,11 @@ def get_combined_year_wise_data(file_type, print_info_logs=True):
         try:
             year_wise_data = get_data_for_a_year(file_type, year)
             if print_info_logs:
-                logger.info('{} dates are present for {}', len(year_wise_data.columns.values) - 2, year)
+                logger.info('{} dates, {} schemes are present for {}', len(year_wise_data.columns.values) - 2,
+                            len(year_wise_data.index), year)
             data = data.join(year_wise_data.set_index(['Fund House Name', 'Scheme Name']),
                              on=['Fund House Name', 'Scheme Name'])
-        except Exception as e:
+        except FileNotFoundError:
             logger.error('{} file not found for {}', get_file_type_label(file_type), year)
     return data
 

@@ -124,7 +124,8 @@ def save_data_for_a_year(data, file_type, year, check_for_existing_data=True):
                 logger.critical('{} data frame for {} has lesser than existing columns', file_type, year)
                 return False
             if len(data.index) < len(existing_data.index):
-                logger.critical('{} data frame for {} has lesser than existing rows', file_type, year)
+                logger.critical('{} data frame for {} has lesser than existing rows({}/{})', file_type, year,
+                                len(data.index), len(existing_data.index))
                 return False
             #  todo include non-NA count
         except FileNotFoundError:
