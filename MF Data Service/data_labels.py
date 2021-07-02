@@ -1,6 +1,6 @@
 from Interval import Interval
 
-statistic_labels = {'count': '-Data Points Count', 'mean': '-Mean', 'std': '-Std Dev', 'min': '-Minimum',
+statistic_labels = {'count': '-Data Points Count', 'mean': '-Mean', 'std': '-Std Dev', 'last ret': '-Last Return', 'min': '-Minimum',
                     '10': '-10th Percentile', '50': '-50th Percentile', '90': '-90th Percentile',
                     'max': '-Maximum', 'v score': '-Volatility Score'}
 

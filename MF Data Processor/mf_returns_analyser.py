@@ -28,13 +28,14 @@ def analyse_returns_for_an_interval(data, i: Interval):
         analysed_data.loc[index, s_label('mean', i)] = round(mean, 2)
         analysed_data.loc[index, s_label('std', i)] = round(std, 3)
         analysed_data.loc[index, s_label('count', i)] = data_row.count()
+        analysed_data.loc[index, s_label('last ret', i)] = data_row.dropna().iloc[-1]
         analysed_data.loc[index, s_label('min', i)] = round(data_row.quantile(0.0), 2)
         analysed_data.loc[index, s_label('10', i)] = round(data_row.quantile(0.1), 2)
         analysed_data.loc[index, s_label('50', i)] = round(data_row.quantile(0.5), 2)
         analysed_data.loc[index, s_label('90', i)] = round(data_row.quantile(0.9), 2)
         analysed_data.loc[index, s_label('max', i)] = round(data_row.quantile(1.0), 2)
         if not pd.isna(std) and std > 0:
-            score = round(get_log_base_2(std), 3) * (-10)
+            score = round(get_log_base_2(std), 3) * 10
             analysed_data.loc[index, s_label('v score', i)] = score
     return analysed_data
 
@@ -51,7 +52,7 @@ def analyse_and_add_common_scheme_data_for_a_chunk(data):
         analysed_data.loc[index, c_label('first date')] = first_date
         analysed_data.loc[index, c_label('last date')] = last_date
         analysed_data.loc[index, c_label('last nav')] = round(last_nav, 3)
-        analysed_data.loc[index, c_label('nav count')] = data_row.dropna().count()
+        analysed_data.loc[index, c_label('nav count')] = data_row.count()
         analysed_data.loc[index, c_label('scheme active')] = 'Yes' if data_row.iloc[
                                                                       -activity_days_threshold:].count() > 0 else 'No'
     return analysed_data
