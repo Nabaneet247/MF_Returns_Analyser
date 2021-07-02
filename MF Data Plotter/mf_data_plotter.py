@@ -45,7 +45,7 @@ def plot_data_for_an_interval(data, interval: Interval, date):
     plot = px.scatter(get_filtered_data(filter_active_schemes(data), interval), x=x_axis_column_name,
                       y=y_axis_column_name,
                       hover_data=hover_data, color='Fund House Name')
-    save_html_plot(plot, date, interval, active_schemes_only=True)
+    save_html_plot(plot, date, interval, file_name_prefix='Active')
 
 
 def plot_analysed_data(data, date):

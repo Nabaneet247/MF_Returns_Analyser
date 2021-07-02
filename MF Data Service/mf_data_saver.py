@@ -23,12 +23,13 @@ def save_analysed_data(data, last_date_analysed=None):
     logger.success('Analysed Data was saved at {}', file_name)
 
 
-def save_html_plot(plot, date, interval: Interval, active_schemes_only=False):
+def save_html_plot(plot, date, interval: Interval, file_name_prefix=''):
     date_format = '%Y-%m-%d'
     formatted_date = pd.to_datetime(date, format='%d-%m-%Y').strftime(date_format)
-    if active_schemes_only:
-        file_name = file_locations.PLOTS_FOLDER_PATH + '{} {} Active MF Returns Plot.html'.format(formatted_date,
-                                                                                                  interval.change_rate_label)
+    if file_name_prefix is not None and len(file_name_prefix) > 0:
+        file_name = file_locations.PLOTS_FOLDER_PATH + '{} {} {} MF Returns Plot.html'.format(formatted_date,
+                                                                                              interval.change_rate_label,
+                                                                                              file_name_prefix)
     else:
         file_name = file_locations.PLOTS_FOLDER_PATH + '{} {} MF Returns Plot.html'.format(formatted_date,
                                                                                            interval.change_rate_label)
