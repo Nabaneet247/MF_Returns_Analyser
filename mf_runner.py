@@ -25,6 +25,8 @@ def run():
 
     if len(new_schemes_list.index) > len(existing_schemes_list.index):
         update_schemes_in_data_file('org nav')
+
+    # todo fetch all data files from AMFI first
     # todo handle start of new year scenario
     current_year = str(datetime.now().year)
     update_org_nav_files_for_a_year(current_year)
@@ -32,6 +34,9 @@ def run():
     clean_all_nav_data()
     intervals = ['30D', '3M', '6M', '1Y', '2Y', '5Y']
     update_returns_for_intervals(intervals=intervals, update_latest_returns_only=True)
-    analyse_returns_for_intervals(intervals=intervals)
-    today_date = datetime.now().strftime('%d-%m-%Y')
-    plot_analysed_data_file_for_a_date(today_date)
+    last_date_analysed = analyse_returns_for_intervals(intervals=intervals)
+    plot_analysed_data_file_for_a_date(last_date_analysed)
+
+
+if __name__ == '__main__':
+    run()

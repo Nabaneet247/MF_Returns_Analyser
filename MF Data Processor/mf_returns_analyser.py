@@ -63,6 +63,7 @@ def analyse_returns_for_intervals(intervals):
     logger.debug('Filling interval independent data for all schemes')
     chunks_count = 100
     nav_data_chunks = get_combined_year_wise_data_chunks('cln nav', chunks_count=chunks_count)
+    last_available_date = nav_data_chunks[0].columns.values[-1]
     chunks_count = len(nav_data_chunks)
     common_data = pd.DataFrame()
     count = 1
@@ -106,8 +107,9 @@ def analyse_returns_for_intervals(intervals):
             on=['Fund House Name', 'Scheme Name'])
         logger.info('{} returns were analysed', interval.abbreviation)
 
-    save_analysed_data(analysed_data)
+    save_analysed_data(analysed_data, last_date_analysed=last_available_date)
+    return last_available_date
 
 
 if __name__ == '__main__':
-    analyse_returns_for_intervals(intervals=['5Y'])
+    analyse_returns_for_intervals(intervals=['1Y', '2Y', '5Y', '6M', '3M', '30D'])

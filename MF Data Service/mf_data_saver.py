@@ -12,10 +12,13 @@ from file_types import get_file_type_label
 from mf_data_provider import get_list_of_all_schemes, get_data_for_a_year
 
 
-def save_analysed_data(data):
+def save_analysed_data(data, last_date_analysed=None):
     date_format = '%Y-%m-%d'
-    today_date = pd.to_datetime(datetime.now()).strftime(date_format)
-    file_name = file_locations.ANALYSED_DATA_FOLDER_PATH + '{} Analysis'.format(today_date)
+    if last_date_analysed is None:
+        file_date_label = pd.to_datetime(datetime.now()).strftime(date_format)
+    else:
+        file_date_label = pd.to_datetime(last_date_analysed, format='%d-%m-%Y').strftime(date_format)
+    file_name = file_locations.ANALYSED_DATA_FOLDER_PATH + '{} Analysis'.format(file_date_label)
     save_data_as_csv(data, file_name)
     logger.success('Analysed Data was saved at {}', file_name)
 

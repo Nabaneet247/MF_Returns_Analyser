@@ -117,8 +117,8 @@ def update_returns_for_intervals(intervals, update_latest_returns_only=False):
                                                             check_for_schemes_mismatch=False)
             returns_data = returns_data.append(existing_returns_data_chunk)
             logger.info('{} returns for {} were updated in this chunk', returns_updated, interval.abbreviation)
-            if returns_updated > 0 and count % 20 == 0:
-                split_and_save_combined_data(returns_data, interval.file_type)
+            # if returns_updated > 0 and count % 50 == 0:
+            #     split_and_save_combined_data(returns_data, interval.file_type)
         split_and_save_combined_data(returns_data, interval.file_type)
 
 
