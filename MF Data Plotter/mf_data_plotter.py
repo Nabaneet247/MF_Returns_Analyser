@@ -11,12 +11,32 @@ from mf_data_saver import save_html_plot
 supported_intervals = ['30D', '3M', '6M', '1Y', '2Y', '5Y']
 
 
+# Adjusts the V-Score to the range of 0-100
+def adjust_v_score(v_score, max_v, min_v):
+    if max_v == min_v:
+        return 0
+    return round((v_score - min_v) / (max_v - min_v) * 100, 1)
+
+
+def adjust_floating_precision(x):
+    if isinstance(x, float):
+        return round(x, 3)
+    else:
+        return x
+
+
 def get_filtered_data(data, interval):
     returns_count_label = get_stat_label_for_key(key='count', interval=interval)
     vol_score_label = get_stat_label_for_key(key='v score', interval=interval)
     mean_label = get_stat_label_for_key(key='mean', interval=interval)
     filtered_data = data[data[vol_score_label].notna()]
-    filtered_data = filtered_data[filtered_data[vol_score_label] < 100]
+    filtered_data = filtered_data.applymap(adjust_floating_precision)
+    v_score_lower_limit = filtered_data[vol_score_label].quantile(0.05)
+    v_score_upper_limit = filtered_data[vol_score_label].quantile(0.95)
+    filtered_data = filtered_data[filtered_data[vol_score_label] >= v_score_lower_limit]
+    filtered_data = filtered_data[filtered_data[vol_score_label] <= v_score_upper_limit]
+    filtered_data[vol_score_label] = filtered_data[vol_score_label].apply(adjust_v_score, args=(
+        v_score_upper_limit, v_score_lower_limit))
     filtered_data = filtered_data[filtered_data[returns_count_label] > 30]
     filtered_data = filtered_data[filtered_data[mean_label] > 0]
     logger.info('{} rows were removed before plotting', len(data.index) - len(filtered_data.index))
