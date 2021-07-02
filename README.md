@@ -3,7 +3,7 @@ This project was designed to scrape Indian Mutual Fund NAV data from the past 15
 Programming Language: Python3  
 Libraries Used: Pandas, BeautifulSoup, Plotly
 
-## Sample Plot generated for 1 Year Historical Returns
+## Sample Plot generated for 1 Year Historical Returns - [Link](https://nabaneet247.github.io/MF_Returns_Analyser/)
 
 ![alt text](https://github.com/Nabaneet247/MF_Returns_Analyser/blob/master/Sample%20Plots/1Y%20Return%20Plot.png?raw=true)
 
