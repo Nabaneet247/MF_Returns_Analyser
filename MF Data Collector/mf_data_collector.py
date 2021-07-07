@@ -31,7 +31,7 @@ def fetch_and_save_html_data_from_amfi_for_multiple_dates(dates, max_processes=1
 
 def fetch_html_data_from_amfi_for_missing_dates_for_a_year(year_string):
     existing_dates = get_list_dates_for_which_navs_have_been_fetched()
-    valid_dates = get_valid_dates_for_a_year(year)
+    valid_dates = get_valid_dates_for_a_year(year_string)
     missing_dates = find_difference_between_two_lists(valid_dates, existing_dates)
     if len(missing_dates) > 0:
         ic(missing_dates[0], missing_dates[-1], len(missing_dates))

@@ -1,3 +1,4 @@
+import sys
 import time
 from datetime import datetime
 
@@ -19,7 +20,8 @@ from mf_data_saver import update_list_of_all_schemes
 
 
 @logger.catch
-def get_all_fund_house_and_scheme_names(refetch_schemes_list_from_amfi=False, max_tries_per_house=20):
+def get_all_fund_house_and_scheme_names(refetch_schemes_list_from_amfi=False, max_tries_per_house=20,
+                                        max_refetch_attempts=3):
     data = pd.DataFrame()
     if not refetch_schemes_list_from_amfi:
         try:
@@ -27,13 +29,18 @@ def get_all_fund_house_and_scheme_names(refetch_schemes_list_from_amfi=False, ma
         except Exception as e:
             logger.error('List of schemes not found. Gonna fetch from AMFI')
     fund_house_names = fetch_all_fund_house_names_from_amfi()
+    fund_house_names.remove('AEGON Mutual Fund')
+    fund_house_names.remove('NJ Mutual Fund')
     logger.info('Fund houses found:\n{}', fund_house_names)
     driver = webdriver.Chrome()
     driver.minimize_window()
 
     index = 0
+    i = 0
+    refetch_attempts = 0
 
-    for fund_house_name in fund_house_names:
+    while i < len(fund_house_names):
+        fund_house_name = fund_house_names[i]
         driver.get('https://www.amfiindia.com/net-asset-value/nav-history')
         fund_house_name_input_tag = driver.find_element_by_xpath(
             '/html/body/div[2]/div[3]/div/form/table[2]/tbody/tr[1]/td/div/span/input')
@@ -57,12 +64,19 @@ def get_all_fund_house_and_scheme_names(refetch_schemes_list_from_amfi=False, ma
             index += 1
         if len(scheme_names) == 0:
             logger.warning('{} had {} schemes', fund_house_name, str(len(scheme_names)))
+            if refetch_attempts == max_refetch_attempts:
+                logger.critical('Refetch attempts exceeded')
+                sys.exit(1)
+            refetch_attempts += 1
+            max_tries_per_house += 5
+            continue
         else:
             logger.info('{} had {} schemes', fund_house_name, str(len(scheme_names)))
+            i += 1
     data = data.drop_duplicates()
     logger.info('A total of {} schemes were found on AMFI', len(data.index))
     update_list_of_all_schemes(data)
-    return data
+    return get_list_of_all_schemes()
 
 
 @logger.catch
