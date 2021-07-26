@@ -95,9 +95,9 @@ def update_returns_for_intervals(intervals, update_latest_returns_only=False):
         logger.success('There is no mismatch in any chunk')
 
         date_format = '%d-%m-%Y'
-        if update_latest_returns_only:
-            start_date = pd.to_datetime(nav_data_chunks[0].columns.values[-1],
-                                        format=date_format) - interval.offset - pd.offsets.DateOffset(days=60)
+        if update_latest_returns_only and len(existing_returns_data_chunks[0].columns.values) > 2:
+            start_date = pd.to_datetime(existing_returns_data_chunks[0].columns.values[-1],
+                                        format=date_format) - interval.offset  # - pd.offsets.DateOffset(days=2)
         else:
             start_date = pd.to_datetime(nav_data_chunks[0].columns.values[2], format=date_format)
         ic(start_date)

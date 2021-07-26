@@ -91,4 +91,4 @@ def plot_analysed_data_file_for_a_date(date):
 
 
 if __name__ == '__main__':
-    plot_analysed_data_file_for_a_date('01-07-2021')
+    plot_analysed_data_file_for_a_date('06-07-2021')

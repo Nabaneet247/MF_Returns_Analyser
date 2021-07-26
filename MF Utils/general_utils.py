@@ -75,4 +75,13 @@ def get_log_base_10(x):
 
 
 def get_log_base_2(x):
-    return math.log(x, 2)
+    try:
+        return math.log(x, 2)
+    except Exception as e:
+        print(x)
+        print(type(e))
+        print(e)
+
+
+def get_log_value(x, base):
+    return math.log(x, base)

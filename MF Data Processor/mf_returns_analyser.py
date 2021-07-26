@@ -5,7 +5,7 @@ import file_locations
 from Interval import Interval
 from data_labels import get_stat_label_for_key as s_label, get_common_label_for_key as c_label
 from general_utils import get_interval_data_from_strings
-from general_utils import get_log_base_2
+from general_utils import get_log_base_2, get_log_value
 from mf_data_provider import get_combined_year_wise_data_chunks, get_list_of_all_schemes
 from mf_data_saver import save_analysed_data
 
@@ -58,6 +58,34 @@ def analyse_and_add_common_scheme_data_for_a_chunk(data):
     return analysed_data
 
 
+def generate_v_score_from_std(std, median):
+    if std == 0:
+        return 0
+    return get_log_value(std, median)
+
+
+def append_v_score_to_analysed_data(data, interval):
+    std_label = s_label('std', interval)
+    data = data[data[std_label] > 0]
+    v_score_label = s_label('v score', interval)
+    median_std = data[std_label].median()
+    if median_std == 1:
+        median_std = 0.99
+
+    min_v_score = generate_v_score_from_std(data[std_label].min(), median_std)
+    max_v_score = generate_v_score_from_std(data[std_label].max(), median_std)
+    for index in data.index.values:
+        if pd.isna(data.loc[index, std_label]):
+            continue
+        v_score = generate_v_score_from_std(data.loc[index, std_label], median_std)
+        if min_v_score == max_v_score:
+            v_score = 0
+        else:
+            v_score = round((v_score - min_v_score) / (max_v_score - min_v_score) * 100, 2)
+        data.loc[index, v_score_label] = v_score
+    return data
+
+
 def analyse_returns_for_intervals(intervals):
     analysed_data = get_list_of_all_schemes()
 
@@ -102,6 +130,8 @@ def analyse_returns_for_intervals(intervals):
             analysed_data_for_current_interval = analysed_data_for_current_interval.append(
                 analyse_returns_for_an_interval(data_chunk, interval))
             count += 1
+
+        # analysed_data_for_current_interval = append_v_score_to_analysed_data(analysed_data_for_current_interval, interval)
 
         analysed_data = analysed_data.join(
             analysed_data_for_current_interval.set_index(['Fund House Name', 'Scheme Name']),
