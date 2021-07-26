@@ -1,7 +1,6 @@
 from datetime import datetime
 
 import pandas as pd
-from icecream import ic
 from loguru import logger
 
 import file_locations
@@ -76,15 +75,17 @@ def save_org_nav_data(data):
 
 
 def update_list_of_all_schemes(data):
+    existing_data_schemes_count = 0
     try:
         existing_data = get_list_of_all_schemes()
+        existing_data_schemes_count = len(existing_data.index)
         data = data.append(existing_data, ignore_index=True).drop_duplicates()
     except FileNotFoundError:
         data = data.drop_duplicates()
-    ic(len(data.index))
     if len(data.index) < 44196:
         logger.critical('Some schemes are missing')
         return
+    logger.debug('{} new schemes are present', len(data.index) - existing_data_schemes_count)
     data.sort_values(by=['Fund House Name', 'Scheme Name'], key=lambda x: x.apply(lambda y: y.lower()),
                      ignore_index=True, inplace=True)
     save_data_as_csv(data, file_locations.SCHEMES_LIST_FILE_PATH)
@@ -95,7 +96,7 @@ def get_file_name_from_year_and_type(file_type, year):
     return file_locations.PROCESSED_DATA_FOLDER_PATH + label + '_' + year
 
 
-def split_and_save_combined_data(data, file_type):
+def split_and_save_combined_data(data, file_type, print_logs=True):
     try:
         data = sort_columns_date_wise(data)
         dates = data.columns.values[2:]
@@ -108,16 +109,17 @@ def split_and_save_combined_data(data, file_type):
             end_index = len(years_map) - reversed_years_map.index(year) - 1 + 2
             date_wise_data = data.iloc[:, start_index:end_index + 1]
             data_for_year = scheme_name_data.join(date_wise_data)
-            logger.info('{} has {} data points from {} till {}', year, len(data_for_year.columns.values) - 2,
-                        data_for_year.columns.values[2], data_for_year.columns.values[-1])
-            save_data_for_a_year(data_for_year, file_type, year)
+            if print_logs:
+                logger.info('{} has {} data points from {} till {}', year, len(data_for_year.columns.values) - 2,
+                            data_for_year.columns.values[2], data_for_year.columns.values[-1])
+            save_data_for_a_year(data_for_year, file_type, year, print_logs)
         return True
     except Exception as e:
         logger.error('Faced error while splitting data\n {} - {}\n', type(e), e)
     return False
 
 
-def save_data_for_a_year(data, file_type, year, check_for_existing_data=True):
+def save_data_for_a_year(data, file_type, year, check_for_existing_data=True, print_logs=True):
     if check_for_existing_data:
         try:
             existing_data = get_data_for_a_year(file_type, year)
